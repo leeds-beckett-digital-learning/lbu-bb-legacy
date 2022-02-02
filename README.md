@@ -8,6 +8,7 @@ the file system of the host server. When a Blackboard Learn service runs on a cl
 Messing with files on the Blackboard Learn server could cause your system to fail so use this tool with great care. The authors accept no liability for any damage
 done when you use this building block.
 
+## Introduction
 Then main purpose of the tool is to examine files that have been created by other building blocks. For example, it can be used to download a debugging log file created by
 another building block.
 
