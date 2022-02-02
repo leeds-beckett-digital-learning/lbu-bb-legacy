@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.blackboard.com/bb-manifest-plugin"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.blackboard.com/bb-manifest-plugin https://maven.blackboard.com/content/repositories/releases/blackboard/platform/bb-manifest-plugin/3800.0.0/bb-manifest-plugin-3800.0.0.xsd">
+  
+  <plugin>
+    <name value="${bbname}" />
+    <handle value="${bbhandle}" />
+    <description value="${description}" />
+    <default-locale value="en_US" />
+    <version value="${version}" />
+    
+    <requires>
+      <bbversion value="3800.0.6" />
+    </requires>
+
+    <http-actions>
+      <!-- <config value="config/config.jsp"/> -->
+    </http-actions>
+    
+    <vendor>
+      <id value="${vendorid}" />
+      <name value="${vendorname}" />
+      <url value="${vendorurl}" />
+      <description value="${vendordescription}" />
+    </vendor>
+
+    <application-defs>
+      <application handle="bblegacyui" 
+        is-sys-tool="true" 
+        is-course-tool="false"
+        is-group-tool="false"
+        is-org-tool="false" 
+        use-ssl="true" name="BB Legacy File Browser" can-allow-guest="false">
+        <description lang="en_US">LBU BB Legacy File Browser User Interface</description>
+        <links>
+            <link>
+                <type value="system_tool" />
+                <handle value="entrypage" />
+                <name value="LBU BB Legacy File Browser" />
+                <url value="index.html" />
+                <description value="Home page for the LBU BB Legacy File Browser building block." />
+            </link>
+        </links>
+      </application>
+    </application-defs>
+
+
+
+    <!-- Code permissions required for proper operation -->
+    <permissions>
+      <permission type="attribute" name="user.authinfo" actions="get"/>
+      <permission type="attribute" name="user.personalinfo" actions="get,set"/>
+      <!-- Only need socket permission to find out host ip address which.
+           is found by getting the host name and resolving it via DNS. -->
+      <permission type="java.net.SocketPermission" name="*" actions="resolve,connect"/>
+      <permission type="java.io.FilePermission" name="/usr/-" actions="read"/>
+      <permission type="java.io.FilePermission" name="/usr/local/bbcontent/-"  actions="read,write,execute,delete"/>
+      <permission type="java.nio.file.LinkPermission" name="/usr/local/bbcontent/-"  actions="hard"/>
+      <permission type="java.io.FilePermission" name="/usr/local/blackboard/-" actions="read,write,delete"/>
+
+      <permission type="java.lang.RuntimePermission" name="getenv.*"/>      
+      <permission type="java.lang.RuntimePermission" name="setFactory"/>      
+      <permission type="java.lang.RuntimePermission" name="modifyThread"/>      
+      <permission type="java.lang.management.ManagementPermission" name="monitor"/>
+    </permissions>
+
+  </plugin>
+</manifest>
