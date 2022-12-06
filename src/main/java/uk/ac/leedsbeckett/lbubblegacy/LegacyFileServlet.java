@@ -159,7 +159,6 @@ public class LegacyFileServlet extends AbstractServlet
               catch ( IOException ioex )
               {
                 out.println( "<p>Technical fault attempting to delete.</p>" );                          
-                core.logger.error( "Unable to delete " + f.getPath(), ioex );
               }
             }
           }
@@ -189,7 +188,6 @@ public class LegacyFileServlet extends AbstractServlet
               catch ( IOException ioex )
               {
                 out.println( "<p>Technical fault attempting to delete.</p>" );                          
-                core.logger.error( "Unable to delete " + f.getPath(), ioex );
               }
             }
           }

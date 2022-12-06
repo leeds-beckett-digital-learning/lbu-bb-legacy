@@ -36,11 +36,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import javax.servlet.annotation.WebListener;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.RollingFileAppender;
 
 
 /**
@@ -61,13 +56,8 @@ public class WebAppCore implements ServletContextListener
   public static SimpleDateFormat dateformatforfilenames = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
   public static SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-  /**
-   * logger is for technical/diagnostic information.
-   */
-  public Logger logger = null;
   
   
-  RollingFileAppender datarfapp                          = null;
   private final Properties defaultproperties             = new Properties();
   private BbLocale locale = new BbLocale();
   String instanceid;
@@ -137,15 +127,6 @@ public class WebAppCore implements ServletContextListener
     if ( !initDefaultSettings( sce ) )
       return;
     
-    try
-    {
-      initLogging();
-    }
-    catch ( IOException ex )
-    {
-      WebAppCore.logToBuffer( "Exception trying to initialise log files." );
-      WebAppCore.logToBuffer( ex );
-    }
     
     contextpath = sce.getServletContext().getContextPath();
   }
@@ -217,39 +198,6 @@ public class WebAppCore implements ServletContextListener
   }
   
   
-  /**
-   * Manually configure logging so that the log files for this application
-   * go where we want them and not into general log files for BB.
-   * @param logfilefolder 
-   */
-  public void initLogging(  ) throws IOException
-  {
-    if ( !Files.exists( logbase ) )
-      Files.createDirectory( logbase );
-    
-    Logger rootlog = LogManager.getLoggerRepository().getRootLogger();
-    if ( rootlog == null )
-      WebAppCore.logToBuffer( "No root log found." );
-    else
-      WebAppCore.logToBuffer( "Root log: " + rootlog.getName() );
-    
-    logger = LogManager.getLoggerRepository().getLogger(WebAppCore.class.getName() );
-    logger.setLevel( Level.INFO );
-    String logfilename = logbase.resolve( serverid + ".log" ).toString();
-    WebAppCore.logToBuffer( logfilename );
-    RollingFileAppender rfapp = 
-        new RollingFileAppender( 
-            new PatternLayout( "%d{ISO8601} %-5p: %m%n" ), 
-            logfilename, 
-            true );
-    rfapp.setMaxBackupIndex( 100 );
-    rfapp.setMaxFileSize( "2MB" );
-    logger.removeAllAppenders();
-    logger.addAppender( rfapp );
-    logger.info( "==========================================================" );
-    logger.info( "Log file has been opened." );
-    logger.info( "==========================================================" );    
-  }
       
   
   /**
@@ -259,7 +207,6 @@ public class WebAppCore implements ServletContextListener
   @Override
   public void contextDestroyed(ServletContextEvent sce)
   {
-    logger.info("BB plugin destroy");
   }
 
   
