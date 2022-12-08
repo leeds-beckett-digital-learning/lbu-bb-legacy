@@ -50,6 +50,8 @@ import org.apache.commons.text.StringEscapeUtils;
 @WebServlet("/legacy/*")
 public class LegacyFileServlet extends AbstractServlet
 {
+  
+  
   /**
    * Works out which page of information to present and calls the appropriate
    * method.
@@ -309,6 +311,8 @@ public class LegacyFileServlet extends AbstractServlet
     String[] parts = path.split("/");
     
     File base = new File( path );
+    File[] list = base.listFiles();
+    Arrays.sort(list);
     
     
     resp.setContentType("text/html");
@@ -323,6 +327,42 @@ public class LegacyFileServlet extends AbstractServlet
       out.println( "td { padding-right: 2em; }" );
       out.println( ".bookmarks {  background-color: rgb(220,220,220); padding: 0.5em 1em 0.5em 1em; border: thin black solid; max-width: 20em; }" );
       out.println( "</style>" );
+      out.println( "<script>" );
+      out.println( "let filemetadatalist = [ " );
+      boolean first = true;
+      int count = 0;
+      for ( File file : list )
+      {
+        if ( file.isFile() )
+        {
+          count++;
+          if ( !first )
+            out.println( "," );
+          first = false;
+          out.println( "  {" );
+          
+          out.print( "    id : " );
+          out.print( count );
+          out.println( "," );
+          
+          out.print( "    name : \"" );
+          out.print( StringEscapeUtils.escapeHtml4( file.getName() ) );
+          out.println( "\"," );
+          
+          out.print( "    length : " );
+          out.print( file.length() );
+          out.println( "," );
+          
+          out.print( "    modified : " );
+          out.print( file.lastModified() );
+          
+          out.print( "  }" );
+        }
+      }
+      out.println( "\n];" );
+      
+      out.println( "</script>" );
+      out.println( "<script src=\"../interaction.js\"></script>" );
       out.println( "</head>" );
       out.println( "<body>" );
       out.println( "<p><a href=\"../index.html\">Home</a></p>" );      
@@ -360,8 +400,6 @@ public class LegacyFileServlet extends AbstractServlet
       }
       out.println( "</h2>" );
       
-      File[] list = base.listFiles();
-      Arrays.sort(list);
       
       out.println( "<div style=\"margin-left: 3em;\">" );
       out.println( "<h3>Sub directories</h3>" );
@@ -372,7 +410,7 @@ public class LegacyFileServlet extends AbstractServlet
       out.print(   URLEncoder.encode( path, "UTF-8" ) );
       out.println( "\"/>" );
       out.println( "<table>" );      
-      int count=0;
+      count=0;
       for ( File file : list )
       {
         if ( file.isDirectory() )
@@ -418,13 +456,25 @@ public class LegacyFileServlet extends AbstractServlet
       out.print(   URLEncoder.encode( path, "UTF-8" ) );
       out.println( "\"/>" );
       out.println( "<table>" );
+      out.print( "<thead><tr><td>" );
+      out.print( "<button type=\"button\" onclick=\"selectAll()\">All</button><br />" );
+      out.print( "<button type=\"button\" onclick=\"selectNone()\">None</button><br />" );
+      out.print( "<button type=\"button\" onclick=\"selectInvert()\">Invert</button><br />" );
+      out.print( "<button type=\"button\" onclick=\"selectRange()\">Range</button>" );
+      out.print( "</td>" );
+      out.print( "<td><button type=\"button\" onclick=\"sortByName()\">Name</button></td>" );
+      out.print( "<td><button type=\"button\" onclick=\"sortByLength()\">Length</button></td>" );
+      out.print( "<td><button type=\"button\" onclick=\"sortByModified()\">Modified</button></td>" );
+      out.print( "</tr></thead><tbody id=\"filetablebody\">" );
       count=0;
       for ( File file : list )
       {
         if ( file.isFile() )
         {
           count++;
-          out.print( "<tr>" );
+          out.print( "<tr id=\"filerow_" );
+          out.print( count );
+          out.print( "\">" );
           out.print( "<td><input type=\"checkbox\" name=\"file_select_" );
           out.print( URLEncoder.encode( file.getAbsolutePath(), "UTF-8" ) );
           out.print( "\"/></td>" );
@@ -448,7 +498,7 @@ public class LegacyFileServlet extends AbstractServlet
       }
       if ( count == 0 )
         out.println( "<tr><td>None</td></tr>" );
-      out.println( "</table>" );
+      out.println( "</tbody></table>" );
       out.println( "<input type=\"submit\" name=\"submitdelete\" value=\"Delete\"/>" );
       out.println( "</form>" );
       out.println( "</div>" );

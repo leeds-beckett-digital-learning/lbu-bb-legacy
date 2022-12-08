@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'war'
 
 
-version = '0.2.0'
+version = '0.2.1'
 description = 'LBU-BB-Legacy'
 group = 'uk.ac.leedsbeckett'
 
